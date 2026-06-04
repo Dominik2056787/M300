@@ -1,0 +1,7 @@
+*.docx
+*.xlsx
+*.pdf
+*.zip
+__pycache__/
+.env
+*.env
