@@ -16,7 +16,7 @@ Dieses Repository enthält einen cloud-nativen Webservice, der aktuelle Fussball
 1. Repository klonen:
 
    git clone https://github.com/Dominik2056787/M300/
-   cd fussball-dashboard
+
 
 2. API Key von football-data.org holen und .env Datei erstellen:
 
