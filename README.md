@@ -34,6 +34,7 @@ Dieses Repository enthält einen cloud-nativen Webservice, der aktuelle Fussball
 
 ## Projektstruktur
 
+```
 fussball-dashboard/
 ├── src/
 │   ├── backend/       # Python Flask API
@@ -44,6 +45,7 @@ fussball-dashboard/
 ├── .github/workflows/ # CI/CD Pipeline
 ├── .gitignore
 └── README.md
+```
 
-## Autor
-Dominik Hausammann – TBZ Informatik 2025/2026
+
+Dominik Hausammann
