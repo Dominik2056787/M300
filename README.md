@@ -1,2 +1,2 @@
 # M300
-Modul 3000 Repo von Dominik Hausammann
+Modul 300 Repo von Dominik Hausammann
