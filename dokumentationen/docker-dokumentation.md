@@ -140,7 +140,7 @@ docker compose ps
 | Service  | URL                          | Status |
 |----------|------------------------------|--------|
 | Frontend | http://34.205.190.81:8080    | Up  |
-| Backend  | http://34.205.190.81:5000    | Up  |
+| Backend  | [http://34.205.190.81:5000](http://34.205.190.81:5000/standings)    | Up  |
 
 Das Fussball Dashboard läuft vollständig in Docker Containern und ist über die fixe Elastic IP erreichbar.
 
