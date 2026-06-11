@@ -1,6 +1,6 @@
 # Lernjournal
 
-In diesem Ordner habe ich mein Lernjournal. Man findet jeden Tag gut und Sauberdokumentiert. 
+In diesem Ordner habe ich mein Lernjournal. Man findet jeden Tag gut und Sauber dokumentiert. 
 
 ### Fragen die Beantwortet werden im Lernjournal
 - Wie bin ich Vorgegangen?
