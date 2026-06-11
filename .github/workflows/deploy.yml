@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.Fussball_dashboard }}
-          script: |
+           script: |
             cd ~/M300
             git pull origin main
             docker compose down
