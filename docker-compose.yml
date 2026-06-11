@@ -1,0 +1,10 @@
+services:
+  backend:
+    image: fussball-backend
+    ports:
+      - "5000:5000"
+
+  frontend:
+    image: fussball-frontend
+    ports:
+      - "8080:8080"

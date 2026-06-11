@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fussball Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 650px; margin: 40px auto; background: #f4f4f4; }
+        h1 { text-align: center; color: #333; }
+        select { display: block; margin: 20px auto; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { background: #1a73e8; color: white; padding: 10px; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+        tr:hover { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Fussball Dashboard</h1>
 
+    <select id="liga-select" onchange="loadStandings()">
+        <option value="PL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+        <option value="BL1">🇩🇪 Bundesliga</option>
+        <option value="PD">🇪🇸 La Liga</option>
+        <option value="SA">🇮🇹 Serie A</option>
+        <option value="FL1">🇫🇷 Ligue 1</option>
+    </select>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Platz</th>
+                <th>Team</th>
+                <th>Punkte</th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        function loadStandings() {
+            const liga = document.getElementById("liga-select").value;
+            document.getElementById("table-body").innerHTML = "<tr><td colspan='3'>Laden...</td></tr>";
+            fetch(`http://34.205.190.81:5000/standings?liga=${liga}`)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById("table-body");
+                    tbody.innerHTML = "";
+                    data.forEach(team => {
+                        tbody.innerHTML += `<tr><td>${team.position}</td><td>${team.team}</td><td>${team.points}</td></tr>`;
+                    });
+                });
+        }
+
+        loadStandings();
+    </script>
+</body>
+</html>
