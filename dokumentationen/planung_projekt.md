@@ -62,7 +62,7 @@ Entwicklung und Deployment eines cloud-nativen Fussball Dashboards auf AWS EC2, 
 | 15 | Lernjournal abschliessen | 06.07.2026 |  Ausstehend |
 | 16 | Abgabe | 09.07.2026 |  Ausstehend |
 
-4. Umsetzung
+## 4. Umsetzung
 
 Wie ich die Ziele erreiche
 
