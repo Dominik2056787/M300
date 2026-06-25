@@ -140,8 +140,10 @@ terraform destroy   # Infrastruktur wieder löschen
 ```
 <img width="1896" height="1002" alt="image" src="https://github.com/user-attachments/assets/9214525d-06b3-4deb-a953-7d67355f2764" />
 
-📷 Screenshot: `terraform apply` zeigt `aws_instance` und `azurerm_resource_group` erfolgreich erstellt
-📷 Screenshot: Azure Portal → Resource Groups zeigt `m300-fussball-rg`
+<img width="1820" height="406" alt="image" src="https://github.com/user-attachments/assets/cda3c399-76e0-4c43-9f64-366d21658a22" />
+
+<img width="1910" height="926" alt="image" src="https://github.com/user-attachments/assets/89d534c2-840a-462f-aee1-ac8b6a8fba5f" />
+
 
 ---
 
@@ -151,7 +153,7 @@ Der Azure for Students Account über TBZ hat eingeschränkte Berechtigungen. Net
 
 ---
 
-# Dokumentation – Sicherheitskonzepte (Woche 6)
+# Dokumentation – Sicherheitskonzepte 
 
 ---
 
@@ -167,7 +169,8 @@ kubectl create secret generic football-api-secret \
 kubectl get secrets
 ```
 
-📷 Screenshot: `kubectl get secrets` zeigt `football-api-secret` mit TYPE `Opaque`
+<img width="1199" height="416" alt="image" src="https://github.com/user-attachments/assets/4a790560-4cdf-4e1d-aade-7aa864ebac1e" />
+
 
 **Secret im Deployment einbinden** (`k8s/backend-deployment.yaml`):
 
@@ -195,7 +198,8 @@ kubectl rollout status deployment/backend
 kubectl exec -it $(kubectl get pod -l app=backend -o jsonpath='{.items[0].metadata.name}') -- env | grep FOOTBALL
 ```
 
-📷 Screenshot: Ausgabe des letzten Befehls zeigt `FOOTBALL_API_KEY=...`
+<img width="1889" height="93" alt="image" src="https://github.com/user-attachments/assets/b102e6b8-f584-4ba4-b74b-d7fcf141cfe5" />
+
 
 ---
 
@@ -234,7 +238,8 @@ kubectl apply -f k8s/network-policy.yaml
 kubectl get networkpolicy
 ```
 
-📷 Screenshot: `kubectl get networkpolicy` zeigt `backend-network-policy`
+<img width="833" height="119" alt="image" src="https://github.com/user-attachments/assets/d5581e76-d4f9-4102-8342-053738169041" />
+
 
 ---
 
@@ -305,8 +310,10 @@ kubectl get ingress
 curl -k https://$(minikube ip)/ -H "Host: fussball-dashboard" -I
 ```
 
-📷 Screenshot: `kubectl get ingress` zeigt `fussball-ingress` mit Ports `80, 443`
-📷 Screenshot: `curl` Ausgabe zeigt `HTTP/2 200`
+<img width="973" height="127" alt="image" src="https://github.com/user-attachments/assets/df898735-0436-4868-96bc-48b125249176" />
+
+<img width="1300" height="221" alt="image" src="https://github.com/user-attachments/assets/70ef034d-a992-4289-99ec-0d0f393c72b0" />
+
 ## 5. .gitignore für Terraform
 
 Der `.terraform/`-Ordner enthält den AWS-Provider (674MB) und darf nicht ins Git:
