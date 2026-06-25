@@ -1,17 +1,20 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from prometheus_flask_exporter import PrometheusMetrics
 import requests
+import os
 
 app = Flask(__name__)
 CORS(app)
+metrics = PrometheusMetrics(app)
 
-API_KEY = "b3652669f46a4f0387f6bc50830cf2b0"
+API_KEY = os.environ.get("FOOTBALL_API_KEY", "")
 
 LIGEN = {
-    "PL": "Premier League",
+    "PL":  "Premier League",
     "BL1": "Bundesliga",
-    "PD": "La Liga",
-    "SA": "Serie A",
+    "PD":  "La Liga",
+    "SA":  "Serie A",
     "FL1": "Ligue 1"
 }
 
@@ -20,14 +23,11 @@ def standings():
     liga = request.args.get("liga", "PL")
     url = f"https://api.football-data.org/v4/competitions/{liga}/standings"
     res = requests.get(url, headers={"X-Auth-Token": API_KEY})
-    table = res.json()["standings"][0]["table"]
-    result = []
-    for team in table:
-        result.append({
-            "position": team["position"],
-            "team": team["team"]["name"],
-            "points": team["points"]
-        })
-    return jsonify(result)
+    return jsonify(res.json())
 
-app.run(host="0.0.0.0", port=5000)
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

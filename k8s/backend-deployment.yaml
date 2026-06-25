@@ -14,24 +14,12 @@ spec:
     spec:
       containers:
       - name: backend
-        image: m300-backend:latest
-        imagePullPolicy: Never
+        image: m300-backend:v2
         ports:
         - containerPort: 5000
-        resources:
-          requests:
-            cpu: 100m
-          limits:
-            cpu: 200m
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend
-spec:
-  selector:
-    app: backend
-  ports:
-  - port: 5000
-    targetPort: 5000
-  type: ClusterIP
+        env:
+        - name: FOOTBALL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: football-api-secret
+              key: api-key
