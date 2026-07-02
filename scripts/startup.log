@@ -1,0 +1,33 @@
+=== Start: Thu Jul  2 08:30:33 UTC 2026 ===
+* minikube v1.38.1 on Ubuntu 26.04
+* Using the docker driver based on existing profile
+
+X The requested memory allocation of 3072MiB does not leave room for system overhead (total system memory: 3831MiB). You may face stability issues.
+* Suggestion: Start minikube with less memory allocated: 'minikube start --memory=3072mb'
+
+* Starting "minikube" primary control-plane node in "minikube" cluster
+* Pulling base image v0.0.50 ...
+* Verifying Kubernetes components...
+  - Using image gcr.io/k8s-minikube/storage-provisioner:v5
+  - Using image registry.k8s.io/metrics-server/metrics-server:v0.8.1
+  - Using image registry.k8s.io/ingress-nginx/controller:v1.14.3
+  - Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.7
+  - Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.7
+* Verifying ingress addon...
+* Enabled addons: storage-provisioner, default-storageclass, metrics-server, ingress
+* Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+pod/backend-6884dfd877-ckgn7 condition met
+pod/backend-6884dfd877-j67z2 condition met
+pod/frontend-5cd76db799-56lb7 condition met
+pod/frontend-5cd76db799-pv8t9 condition met
+=== Fertig: Thu Jul  2 08:31:52 UTC 2026 ===
+Forwarding from 0.0.0.0:5000 -> 5000
+Forwarding from 0.0.0.0:8080 -> 8080
+Handling connection for 8080
+Handling connection for 5000
+Handling connection for 5000
+Handling connection for 8080
+E0702 09:10:51.933038   25272 portforward.go:522] "Unhandled Error" err="an error occurred forwarding 8080 -> 8080: error forwarding port 8080 to pod 002196c3f33700f64b4a65b0ab2e0d86218ceacdd9ccae4d52c72dcec4c769f4, uid : Error response from daemon: No such container: 002196c3f33700f64b4a65b0ab2e0d86218ceacdd9ccae4d52c72dcec4c769f4"
+error: lost connection to pod
+Handling connection for 5000
+Handling connection for 5000

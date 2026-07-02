@@ -1,56 +1,320 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Fussball Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 650px; margin: 40px auto; background: #f4f4f4; }
-        h1 { text-align: center; color: #333; }
-        select { display: block; margin: 20px auto; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: #1a73e8; color: white; padding: 10px; }
-        td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
-        tr:hover { background: #f0f0f0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matchday — Live Tabellen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pitch:        #0E2A1F;
+    --pitch-deep:   #081C14;
+    --paper:        #F7F5EE;
+    --paper-dim:    #EDEADF;
+    --gold:         #E8B93A;
+    --gold-dim:     #a8862d;
+    --red:          #C4432B;
+    --ink:          #14201A;
+    --line:         #D9D3C1;
+    --line-dark:    #1E3A2C;
+    --muted:        #6E7A72;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(232,185,58,0.10), transparent 45%),
+      var(--pitch);
+    background-attachment: fixed;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--paper);
+    min-height: 100vh;
+    padding: 0 0 64px;
+  }
+
+  .masthead {
+    position: relative;
+    padding: 56px 24px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--line-dark);
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 64px);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.35em;
+    font-size: 11px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    line-height: 0.95;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+  }
+  h1 span { color: var(--gold); }
+  .sub {
+    margin: 14px 0 0;
+    color: rgba(247,245,238,0.55);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .league-bar {
+    max-width: 900px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+  }
+  .league-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .league-tabs button {
+    appearance: none;
+    border: 1px solid var(--line-dark);
+    background: var(--pitch-deep);
+    color: rgba(247,245,238,0.7);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .league-tabs button .flag { font-size: 1.05rem; }
+  .league-tabs button:hover {
+    border-color: var(--gold-dim);
+    color: var(--paper);
+  }
+  .league-tabs button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .league-tabs button.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--pitch-deep);
+  }
+
+  .board-wrap {
+    max-width: 900px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+  }
+  .board {
+    background: var(--paper);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55);
+    animation: rise 0.5s cubic-bezier(.2,.7,.3,1);
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .board-head {
+    display: grid;
+    grid-template-columns: 64px 1fr 90px;
+    padding: 18px 20px;
+    background: var(--pitch-deep);
+    color: var(--paper);
+  }
+  .board-head span {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(247,245,238,0.55);
+  }
+  .board-head span:last-child { text-align: right; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 64px 1fr 90px;
+    align-items: center;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    transition: background 0.12s ease;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: var(--paper-dim); }
+
+  .pos {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+  }
+  .row.ucl .pos   { background: var(--gold); color: var(--pitch-deep); }
+  .row.rel .pos   { background: var(--red); color: var(--paper); }
+
+  .team {
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding-left: 16px;
+  }
+  .pts {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    text-align: right;
+    font-size: 1.02rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 18px;
+    font-size: 0.78rem;
+    color: rgba(247,245,238,0.55);
+    font-family: 'Space Mono', monospace;
+    flex-wrap: wrap;
+  }
+  .legend span { display: flex; align-items: center; gap: 7px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .dot.ucl { background: var(--gold); }
+  .dot.rel { background: var(--red); }
+
+  .state {
+    padding: 48px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+  }
+  .state.error { color: var(--red); }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(247,245,238,0.3);
+    letter-spacing: 0.08em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .board { animation: none; }
+  }
+</style>
 </head>
 <body>
-    <h1>Fussball Dashboard</h1>
 
-    <select id="liga-select" onchange="loadStandings()">
-        <option value="PL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
-        <option value="BL1">🇩🇪 Bundesliga</option>
-        <option value="PD">🇪🇸 La Liga</option>
-        <option value="SA">🇮🇹 Serie A</option>
-        <option value="FL1">🇫🇷 Ligue 1</option>
-    </select>
+  <header class="masthead">
+    <p class="eyebrow">Live · Saison 2026/27</p>
+    <h1>MATCH<span>DAY</span></h1>
+    <p class="sub">Tabellenstand der fünf grossen europäischen Ligen</p>
+  </header>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Platz</th>
-                <th>Team</th>
-                <th>Punkte</th>
-            </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-    </table>
+  <div class="league-bar">
+    <div class="league-tabs" id="league-tabs">
+      <button data-code="PL" class="active"><span class="flag">🏴</span> Premier League</button>
+      <button data-code="BL1"><span class="flag">🇩🇪</span> Bundesliga</button>
+      <button data-code="PD"><span class="flag">🇪🇸</span> La Liga</button>
+      <button data-code="SA"><span class="flag">🇮🇹</span> Serie A</button>
+      <button data-code="FL1"><span class="flag">🇫🇷</span> Ligue 1</button>
+    </div>
+  </div>
 
-    <script>
-        function loadStandings() {
-            const liga = document.getElementById("liga-select").value;
-            document.getElementById("table-body").innerHTML = "<tr><td colspan='3'>Laden...</td></tr>";
-            fetch(`http://34.205.190.81:5000/standings?liga=${liga}`)
-                .then(res => res.json())
-                .then(data => {
-                    const tbody = document.getElementById("table-body");
-                    tbody.innerHTML = "";
-                    data.forEach(team => {
-                        tbody.innerHTML += `<tr><td>${team.position}</td><td>${team.team}</td><td>${team.points}</td></tr>`;
-                    });
-                });
-        }
+  <div class="board-wrap">
+    <div class="board">
+      <div class="board-head">
+        <span>Platz</span>
+        <span>Team</span>
+        <span>Punkte</span>
+      </div>
+      <div id="table-body"></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot ucl"></i> Champions League</span>
+      <span><i class="dot rel"></i> Abstiegszone</span>
+    </div>
+  </div>
 
-        loadStandings();
-    </script>
+  <footer>M300 — FUSSBALL DASHBOARD · AWS EC2 / MINIKUBE</footer>
+
+<script>
+  const API_BASE = window.location.hostname;
+  const tableBody = document.getElementById("table-body");
+  const tabs = document.querySelectorAll(".league-tabs button");
+
+  function renderState(html, isError) {
+    tableBody.innerHTML = `<div class="state${isError ? " error" : ""}">${html}</div>`;
+  }
+
+  function renderRows(data) {
+    if (!Array.isArray(data) || data.length === 0) {
+      renderState("Keine Daten verfügbar.", false);
+      return;
+    }
+    const total = data.length;
+    tableBody.innerHTML = data.map(team => {
+      const pos = team.position;
+      let cls = "";
+      if (pos <= 4) cls = "ucl";
+      else if (pos > total - 3) cls = "rel";
+      return `
+        <div class="row ${cls}">
+          <span class="pos">${pos}</span>
+          <span class="team">${team.team}</span>
+          <span class="pts">${team.points}</span>
+        </div>`;
+    }).join("");
+  }
+
+  function loadStandings(liga) {
+    renderState("Lade Tabelle …", false);
+    fetch(`http://${API_BASE}:5000/standings?competition=${liga}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Serverfehler " + res.status);
+        return res.json();
+      })
+      .then(renderRows)
+      .catch(err => {
+        renderState("Daten konnten nicht geladen werden. Backend prüfen.", true);
+        console.error(err);
+      });
+  }
+
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      loadStandings(btn.dataset.code);
+    });
+  });
+
+  loadStandings("PL");
+</script>
 </body>
 </html>
