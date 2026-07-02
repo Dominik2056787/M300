@@ -3,6 +3,15 @@
 Diese Dokumentation fasst die technische Umsetzung des Projekts chronologisch zusammen: von der Containerisierung über Kubernetes, CI/CD und Monitoring bis zu Infrastructure as Code, Security-Massnahmen und der vollständigen Multi-Cloud-Migration auf Azure.
 
 ---
+## Inhaltsverzeichnis
+
+- [Teil 1 – Docker, Kubernetes, CI/CD & Autoscaling](#teil-1--docker-kubernetes-cicd--autoscaling-11062026)
+- [Teil 2 – Monitoring mit Prometheus & Grafana](#teil-2--monitoring-mit-prometheus--grafana-18062026)
+- [Teil 3 – Terraform & Multi-Cloud Grundlagen](#teil-3--terraform--multi-cloud-grundlagen-25062026)
+- [Teil 4 – Sicherheitskonzepte](#teil-4--sicherheitskonzepte-25062026)
+- [Teil 5 – Vollständige Multi-Cloud Migration AWS → Azure](#teil-5--vollständige-multi-cloud-migration-aws--azure-02072026)
+- [Teil 6 – Automatisierter Backup-Job zu Azure Storage](#teil-6--automatisierter-backup-job-zu-azure-storage-02072026)
+
 
 # Teil 1 – Docker, Kubernetes, CI/CD & Autoscaling (11.06.2026)
 
@@ -1084,7 +1093,8 @@ Das Backup läuft damit automatisch jeden Tag um 02:00 Uhr, ohne manuellen Eingr
 
 <img width="740" height="160" alt="image" src="https://github.com/user-attachments/assets/b8060ddf-7eee-44c5-9220-95ecb54360bb" />
 
-
+### Fluss diagramm Backup Konzept
+<img width="624" height="565" alt="image" src="https://github.com/user-attachments/assets/3af6d9c1-8011-4926-b127-029c77533437" />
 ## 6.7 Verifizierung im Azure Storage
 
 ```bash
@@ -1105,11 +1115,3 @@ az storage blob list --account-name m300backuphausammann --account-key "<KEY>" -
 | Secret-Handling | Key ausgelagert, nicht im Code | Erfolgreich |
 
 ---
-
-# Gesamtübersicht aller Screenshots, die noch aufgenommen werden müssen
-
-| # | Abschnitt | Was screenshoten | Befehl |
-|---|-----------|-------------------|--------|
-| 1 | 6.5 Testlauf | Terminal mit erfolgreichem Backup-Log | `cat ~/M300/scripts/backup.log` |
-| 2 | 6.6 Cron-Job | Terminal mit eingetragenem Cron-Job | `crontab -l` |
-| 3 | 6.7 Verifizierung | Blob-Liste im Terminal oder Azure Portal | `az storage blob list --account-name m300backuphausammann --account-key "<KEY>" --container-name m300-backups -o table` |
