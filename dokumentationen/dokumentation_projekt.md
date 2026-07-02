@@ -1115,3 +1115,153 @@ az storage blob list --account-name m300backuphausammann --account-key "<KEY>" -
 | Secret-Handling | Key ausgelagert, nicht im Code | Erfolgreich |
 
 ---
+
+# Teil 7 – Monitoring auf Azure & Alerting
+
+## 7.1 Ziel und Bezug zum Projekt
+
+Bisher lief Monitoring (Prometheus/Grafana) nur auf AWS. Für eine vollständige Multi-Cloud-Umgebung wurde derselbe Monitoring-Stack zusätzlich auf der Azure-VM eingerichtet. Ausserdem wurde eine Alert-Regel konfiguriert, um die im Bewertungsraster explizit geforderte "Implementierung von Alarmierung/Benachrichtigungen" (E2) nachzuweisen.
+
+## 7.2 Prometheus & Grafana auf Azure installieren
+
+Identisches Vorgehen wie auf AWS (siehe Teil 2):
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+kubectl create namespace monitoring
+
+helm install monitoring prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --set grafana.service.type=NodePort \
+  --set prometheus.service.type=NodePort
+```
+
+```bash
+kubectl get pods -n monitoring
+```
+
+## 7.3 Backend-Service für ServiceMonitor vorbereiten
+
+Der Backend-Service auf Azure wurde ursprünglich per `kubectl expose` ohne benannten Port erstellt. Ein ServiceMonitor benötigt jedoch einen benannten Port (`http`), daher wurde der Service neu erstellt:
+
+```bash
+kubectl delete svc backend
+kubectl expose deployment backend --port=5000 --target-port=5000 --name=backend
+kubectl patch svc backend -p '{"spec":{"ports":[{"name":"http","port":5000,"targetPort":5000,"protocol":"TCP"}]}}'
+kubectl label service backend app=backend
+```
+
+## 7.4 ServiceMonitor erstellen
+
+```bash
+kubectl apply -f ~/M300/k8s/servicemonitor.yaml
+```
+
+(Gleiche Datei wie auf AWS, siehe Teil 2.5)
+
+## 7.5 Fehlerbehebung: Ports in der Azure Network Security Group
+
+Prometheus (Port 9090) und Grafana (Port 3000) waren zunächst nicht von aussen erreichbar, da die NSG-Regeln nur SSH, Frontend und Backend erlaubten. Ergänzt über Azure CLI:
+
+```bash
+az network nsg rule create \
+  --resource-group m300-fussball-rg \
+  --nsg-name m300-nsg \
+  --name Prometheus \
+  --priority 1004 \
+  --direction Inbound \
+  --access Allow \
+  --protocol Tcp \
+  --destination-port-ranges 9090
+
+az network nsg rule create \
+  --resource-group m300-fussball-rg \
+  --nsg-name m300-nsg \
+  --name Grafana \
+  --priority 1005 \
+  --direction Inbound \
+  --access Allow \
+  --protocol Tcp \
+  --destination-port-ranges 3000
+```
+
+<img width="1572" height="535" alt="image" src="https://github.com/user-attachments/assets/3d566316-871d-47f5-9cb6-66b15da450bc" />
+
+## 7.6 Verifizierung: ServiceMonitor Status
+
+```bash
+kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 9090:9090 --address 0.0.0.0 &
+```
+
+Im Browser unter `http://20.203.129.36:9090/targets` geprüft – `backend-monitor` zeigt **2/2 UP**.
+
+<img width="1916" height="966" alt="image" src="https://github.com/user-attachments/assets/8042dd9e-d96f-482d-adb9-558ab6eb966e" />
+
+## 7.7 Alert-Regel einrichten
+
+Grafana-Zugriff eingerichtet:
+
+```bash
+kubectl port-forward -n monitoring service/monitoring-grafana 3000:80 --address=0.0.0.0 &
+kubectl get secret -n monitoring monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+echo
+```
+
+In Grafana (`http://20.203.129.36:3000`, Login `admin` + generiertes Passwort) unter **Alerting → Alert rules** wurde folgende Regel erstellt:
+
+| Einstellung | Wert |
+|---|---|
+| Name | Backend Pods unter Minimum |
+| Query | `count(up{job="backend"} == 1)` |
+| Condition | IS BELOW 2 |
+| Evaluation interval | 1m |
+| Pending period | 2m |
+| Folder | m300-alerts |
+
+Diese Regel überwacht, ob weniger als 2 Backend-Pods laufen (das konfigurierte HPA-Minimum auf AWS).
+
+<img width="1915" height="1013" alt="image" src="https://github.com/user-attachments/assets/d36a9030-4acc-424c-a25f-37bf1d7b77f2" />
+
+
+## 7.8 Funktionstest der Alert-Regel
+
+Um zu verifizieren, dass die Regel korrekt reagiert, wurde ein Backend-Pod manuell gelöscht:
+
+```bash
+kubectl delete pod -l app=backend --field-selector status.phase=Running -o name | head -1 | xargs kubectl delete
+```
+
+Der Graph der Alert-Regel zeigte daraufhin sichtbar einen Einbruch der Metrik von 2 auf 1 laufenden Pod, bevor Kubernetes den Ersatz-Pod automatisch neu startete.
+
+
+Da die Downtime durch den automatischen Neustart kürzer war als die konfigurierte Pending Period (2 Minuten), wechselte die Regel nicht bis in den Status "Firing". Um dies gezielt zu erzwingen, wurde das Backend-Deployment temporär auf 0 Replicas herunterskaliert:
+
+```bash
+kubectl scale deployment backend --replicas=0
+sleep 150
+kubectl get pods -l app=backend
+```
+
+
+Nach dem Test wurde der ursprüngliche Zustand wiederhergestellt:
+
+```bash
+kubectl scale deployment backend --replicas=2
+```
+
+## 7.9 Hinweis: E-Mail-Benachrichtigung
+
+Für eine vollständige E-Mail-Benachrichtigung müsste zusätzlich ein SMTP-Server (z. B. Gmail mit App-Passwort) in der Grafana-Konfiguration hinterlegt werden. Aus Datenschutzgründen wurde bewusst darauf verzichtet, private Zugangsdaten in die Cluster-Konfiguration einzutragen. Die Alert-Regel selbst ist vollständig funktional und im Grafana-UI sichtbar; lediglich der externe E-Mail-Versand wurde nicht abschliessend konfiguriert. Dies ist im Wartungskonzept als möglicher nächster Schritt vermerkt.
+
+**Zusammenfassung Teil 7:**
+
+| Komponente | Status |
+|---|---|
+| Monitoring auf Azure (Prometheus/Grafana) | Erfolgreich |
+| ServiceMonitor / Metriken-Erfassung | Erfolgreich (2/2 Targets UP) |
+| NSG-Regeln für Monitoring-Ports | Erfolgreich |
+| Alert-Regel konfiguriert | Erfolgreich |
+| Alert-Regel funktional getestet | Erfolgreich (Metrik-Dip nachgewiesen) |
+| E-Mail-Benachrichtigung | Nicht konfiguriert (Datenschutz) |
