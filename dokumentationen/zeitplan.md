@@ -27,12 +27,18 @@ gantt
     Helm und kube prometheus stack :done, mon2, 2026-06-18, 1d
     ServiceMonitor und Grafana Dashboard :done, mon3, 2026-06-18, 1d
     section Terraform
-    Infrastructure as Code fuer EC2 :active, tf1, 2026-06-25, 1d
-    Terraform State und Module :active, tf2, 2026-06-25, 1d
+    Infrastructure as Code fuer EC2 :done, tf1, 2026-06-25, 1d
+    Terraform State und Multi-Cloud Grundlagen :done, tf2, 2026-06-25, 1d
     section Security
-    HTTPS und TLS Zertifikate :sec1, 2026-07-02, 1d
-    Kubernetes Secrets und Network Policies :sec2, 2026-07-02, 1d
+    HTTPS und TLS Zertifikate :done, sec1, 2026-06-25, 1d
+    Kubernetes Secrets und Network Policies :done, sec2, 2026-06-25, 1d
+    section Multi-Cloud Migration
+    Neuer unrestriktiver Azure Account :done, mc1, 2026-07-02, 1d
+    Azure VM Netzwerk und Compute via Terraform :done, mc2, 2026-07-02, 1d
+    Vollstaendiges Redeployment auf Azure :done, mc3, 2026-07-02, 1d
+    Frontend Redesign und Autostart Service :done, mc4, 2026-07-02, 1d
     section Abschluss
+    Security und Monitoring auf Azure uebertragen :test0, 2026-07-09, 1d
     End to End Testing und Review :test1, 2026-07-09, 1d
     Dokumentation finalisieren :test2, 2026-07-09, 1d
     Abgabe :milestone, abgabe1, 2026-07-09, 0d
@@ -48,18 +54,16 @@ gantt
 | Do, 04.06. | Frontend, 5 Ligen, CORS, CSS Styling |
 | Do, 11.06. | Elastic IP, IP-Bug fix, Docker, CI/CD, Kubernetes, HPA (alles an einem Tag umgesetzt) |
 | Do, 18.06. | Monitoring: Prometheus, Grafana, Helm, ServiceMonitor, Dashboard |
-| Do, 25.06. | Terraform: Infrastructure as Code für EC2 und Cluster-Setup |
-| Do, 02.07. | Sicherheitskonzepte: HTTPS/TLS, Kubernetes Secrets, Network Policies |
-| Do, 09.07. | End-to-End Testing, Review, Doku finalisieren, **Abgabe** |
+| Do, 25.06. | Terraform: Infrastructure as Code, Multi-Cloud Grundlagen (AWS + Azure Resource Group); Security: HTTPS/TLS, Kubernetes Secrets, Network Policies |
+| Do, 02.07. | Vollständige Multi-Cloud Migration: neuer Azure Account, komplette Infrastruktur (VM, Netzwerk) via Terraform, Applikation komplett auf Azure redeployed, Frontend-Redesign, Autostart-Service |
+| Do, 09.07. | Security/Monitoring auf Azure übertragen, End-to-End Testing, Review, Doku finalisieren, **Abgabe** |
 
 ---
 
 ### Version & Stand
 
-Version vom 18.06.2026, der Zeitplan wird jede Woche aktualisiert nach dem neusten Stand.
-
+Version vom 02.07.2026, der Zeitplan wird jede Woche aktualisiert nach dem neusten Stand.
 Letzter Arbeitstag ist der 09.07.2026.
-
-Aktueller Stand ist 18.06.2026, Woche 5 abgeschlossen.
+Aktueller Stand ist 02.07.2026, Woche 8 abgeschlossen.
 
 Dominik Hausammann
