@@ -6,7 +6,7 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %d.%m
     section Uebergreifend
-    Lernjournal fuehren :done, jour1, 2026-05-28, 43d
+    Lernjournal führen :done, jour1, 2026-05-28, 43d
     Dokumentation schreiben :done, dok1, 2026-05-28, 43d
     section Planung und Setup
     Projektidee waehlen und Lehrer Freigabe :done, plan1, 2026-05-28, 1d
