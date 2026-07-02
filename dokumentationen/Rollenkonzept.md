@@ -42,5 +42,3 @@ Aktuell ist innerhalb von Kubernetes **keine granulare RBAC-Konfiguration** eing
 - Eigene Namespaces pro Komponente (z. B. `frontend`, `backend`, `monitoring`) einrichten
 - Rollen (`Role`/`ClusterRole`) und Rollenbindungen (`RoleBinding`) definieren, die den Zugriff auf das jeweils benötigte Minimum beschränken (Least-Privilege-Prinzip)
 - Getrennte Service Accounts für Frontend- und Backend-Pods verwenden, statt des Default-Accounts
-
-<img width="624" height="565" alt="image" src="https://github.com/user-attachments/assets/3af6d9c1-8011-4926-b127-029c77533437" />
